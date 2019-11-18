@@ -2077,7 +2077,6 @@ GameObject:
   - component: {fileID: 5144175658211263776}
   - component: {fileID: 1791317440708570026}
   - component: {fileID: 4458118480200127941}
-  - component: {fileID: 8059631401534270880}
   m_Layer: 0
   m_Name: cupboard1
   m_TagString: Untagged
@@ -2114,6 +2113,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59b8c46ed4e849740a16986a28ea7397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Name: "\u0428\u043A\u0430\u0444 1"
+  Image: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!114 &1791317440708570026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2139,18 +2140,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.534, y: 0.892, z: 0.213}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8059631401534270880
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1990922193273538739}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8723ba646e0aa54ea4f0e90b824e529, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2300295352195680505
 GameObject:
   m_ObjectHideFlags: 0
