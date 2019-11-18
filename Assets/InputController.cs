@@ -2,55 +2,72 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace CarParking
+namespace Ceramic3d.Test
 {
+    [RequireComponent(typeof(Camera))]
     public class InputController : MonoBehaviour
     {
-        private bool uiBlock;
+        public OverviewCamera OverviewCamera;
 
-        public float MoveSensitivity;
-        public float ZoomSensitivity;
-        public float ZoomDelta { get; private set; }
-        public Vector2 MoveDelta { get; private set; }
+        public Draggable selectedDraggable;
+        private bool isUiBlocks;
 
-        private bool IsUIBlocks(Vector2 pointerPosition)
+        private bool CheckUiBlocks(Vector2 pointerPosition)
+        {
+            foreach (var result in GetSelected(pointerPosition))
+                if (result.layer == LayerMask.NameToLayer("UI"))
+                    return true;
+            return false;
+        }
+
+        private IEnumerable<GameObject> GetSelected(Vector2 pointerPosition)
         {
             var pointerEventData = new PointerEventData(EventSystem.current) { position = pointerPosition };
             var raycastResults = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerEventData, raycastResults);
-
-            foreach (var result in raycastResults)
-                if (result.gameObject.layer == LayerMask.NameToLayer("UI"))
-                    return true;
-
-            return false;
+            foreach (var raycastResult in raycastResults)
+                yield return raycastResult.gameObject;
         }
 
         private void Update()
         {
-            ZoomDelta = 0;
-            MoveDelta = Vector2.zero;
-
-            if (!IsUIBlocks(Input.mousePosition))
-                ZoomDelta = -Input.GetAxis("Mouse ScrollWheel") * ZoomSensitivity;
-
-            if (Input.GetMouseButtonDown(0) && IsUIBlocks(Input.mousePosition))
-                uiBlock = true;
-
+            if (Input.GetMouseButtonDown(0))
+            {
+                foreach (var selected in GetSelected(Input.mousePosition))
+                {
+                    var draggable = selected.GetComponent<Draggable>();
+                    if (draggable != null)
+                    {
+                        selectedDraggable = draggable;
+                        break;
+                    }
+                }
+            }
             if (Input.GetMouseButtonUp(0))
-                uiBlock = false;
+                selectedDraggable = null;
 
-            if (uiBlock)
-                return;
+            if (selectedDraggable != null)
+            {
+                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var plane = new Plane(Camera.main.transform.forward, selectedDraggable.transform.position);
+                plane.Raycast(ray, out var enter);
+                selectedDraggable.Drag(ray.GetPoint(enter));
+            }
 
-            if (Input.GetMouseButton(0))
-                MoveDelta = new Vector2(Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y")) * MoveSensitivity;
-        }
+            if (Input.GetMouseButtonDown(1) && CheckUiBlocks(Input.mousePosition))
+                isUiBlocks = true;
+            if (Input.GetMouseButtonUp(1))
+                isUiBlocks = false;
 
-        private void Reset()
-        {
-            MoveSensitivity = 1f;
-            ZoomSensitivity = 10f;
+            if (!isUiBlocks)
+            {
+                OverviewCamera.TargetRadius += -Input.GetAxis("Mouse ScrollWheel");
+                if (Input.GetMouseButton(1))
+                {
+                    OverviewCamera.TargetHorizontalRotation += Input.GetAxis("Mouse X");
+                    OverviewCamera.TargetVerticalRotation += -Input.GetAxis("Mouse Y");
+                }
+            }
         }
     }
 }
