@@ -1,76 +1,54 @@
 ﻿using UnityEngine;
 
-namespace CarParking
+namespace Ceramic3d.Test
 {
     public class OverviewCamera : MonoBehaviour
     {
         public Transform Target;
         [Range(0.001f, 1)]
         public float Smoothness;
+
         public float MaxVerticalRotation;
         public float MinVerticalRotation;
-        public Vector2 InitialRotation;
         public float MinRadius;
         public float MaxRadius;
 
-        private float horizontalRotationOffset;
-        private float verticalRotationOffset;
-        private float zoomOffset;
+        public float TargetVerticalRotation;
+        public float TargetHorizontalRotation;
+        public float TargetRadius;
 
-        private float currentHorizontalRotation = 0;
-        private float currentVerticalRotation = 0;
-        private float currentZoom = 1;
-
-        private InputController uiInteraction;
-
-        private void Awake()
-        {
-            uiInteraction = FindObjectOfType<InputController>();
-        }
-
+        private float currentHorizontalRotation;
+        private float currentVerticalRotation;
+        private float currentRadius;
+        
         protected void Start()
         {
             transform.position = Target.position + Target.forward;
-            horizontalRotationOffset = InitialRotation.x;
-            verticalRotationOffset = InitialRotation.y;
-            zoomOffset = MaxRadius;
             currentHorizontalRotation = 0;
             currentVerticalRotation = 0;
-            currentZoom = 1;
+            currentRadius = 1;
         }
 
         protected virtual void Update()
         {
-            horizontalRotationOffset += uiInteraction.MoveDelta.x;
-            verticalRotationOffset += uiInteraction.MoveDelta.y;
-            zoomOffset += uiInteraction.ZoomDelta;
+            TargetVerticalRotation = Mathf.Min(TargetVerticalRotation, MaxVerticalRotation);
+            TargetVerticalRotation = Mathf.Max(TargetVerticalRotation, MinVerticalRotation);
+            TargetRadius = Mathf.Min(TargetRadius, MaxRadius);
+            TargetRadius = Mathf.Max(TargetRadius, MinRadius, 0);
 
-            if (currentVerticalRotation + verticalRotationOffset > MaxVerticalRotation)
-                verticalRotationOffset -= currentVerticalRotation + verticalRotationOffset - MaxVerticalRotation;
+            var smoothness = 1.001f - Smoothness;
 
-            if (currentVerticalRotation + verticalRotationOffset < MinVerticalRotation)
-                verticalRotationOffset += MinVerticalRotation - currentVerticalRotation - verticalRotationOffset;
+            var horizontalRotationDelta = TargetHorizontalRotation - currentHorizontalRotation;
+            transform.RotateAround(Target.position, Vector3.up, horizontalRotationDelta * smoothness);
+            currentHorizontalRotation += horizontalRotationDelta * smoothness;
 
-            if (currentZoom + zoomOffset > MaxRadius)
-                zoomOffset -= currentZoom + zoomOffset - MaxRadius;
+            var verticalRotationDelta = TargetVerticalRotation - currentVerticalRotation;
+            transform.RotateAround(Target.position, Vector3.Cross(transform.position - Target.position, Vector3.up), verticalRotationDelta * smoothness);
+            currentVerticalRotation += verticalRotationDelta * smoothness;
 
-            if (currentZoom + zoomOffset < MinRadius)
-                zoomOffset += MinRadius - currentZoom - zoomOffset;
-
-            if (currentZoom + zoomOffset <= 0)
-                zoomOffset += -currentZoom - zoomOffset;
-
-            transform.RotateAround(Target.position, Vector3.up, horizontalRotationOffset * (1.001f - Smoothness));
-            currentHorizontalRotation += horizontalRotationOffset * (1.001f - Smoothness);
-            horizontalRotationOffset -= horizontalRotationOffset * (1.001f - Smoothness);
-
-            transform.RotateAround(Target.position, Vector3.Cross(transform.position - Target.position, Vector3.up), verticalRotationOffset * (1.001f - Smoothness));
-            currentVerticalRotation += verticalRotationOffset * (1.001f - Smoothness);
-            verticalRotationOffset -= verticalRotationOffset * (1.001f - Smoothness);
-
-            transform.position += (transform.position - Target.position).normalized * zoomOffset * (1.001f - Smoothness);
-            currentZoom += zoomOffset * (1.001f - Smoothness);
-            zoomOffset -= zoomOffset * (1.001f - Smoothness);
+            var radiusDelta = TargetRadius - currentRadius;
+            transform.position += (transform.position - Target.position).normalized * radiusDelta * smoothness;
+            currentRadius += radiusDelta * smoothness;
 
             transform.LookAt(Target.position);
         }
