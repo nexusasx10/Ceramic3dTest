@@ -548,7 +548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: "\u0428\u043A\u0430\u0444 3x6 250"
-  Image: {fileID: 21300000, guid: 7a72334abce022443aa4fdf3afbbe6e7, type: 3}
+  Image: {fileID: 21300000, guid: 7f2202a9b664e1e4a896e51d5174daf6, type: 3}
 --- !u!114 &5963457219998780469
 MonoBehaviour:
   m_ObjectHideFlags: 0
