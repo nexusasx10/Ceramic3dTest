@@ -26,7 +26,8 @@ namespace Ceramic3d.Test
             var raycastResults = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerEventData, raycastResults);
             foreach (var raycastResult in raycastResults)
-                yield return raycastResult.gameObject;
+                if (raycastResult.gameObject.layer == LayerMask.NameToLayer("Draggable"))
+                    yield return raycastResult.gameObject;
         }
 
         private void Update()
@@ -47,12 +48,7 @@ namespace Ceramic3d.Test
                 selectedDraggable = null;
 
             if (selectedDraggable != null)
-            {
-                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                var plane = new Plane(Camera.main.transform.forward, selectedDraggable.transform.position);
-                plane.Raycast(ray, out var enter);
-                selectedDraggable.Drag(ray.GetPoint(enter));
-            }
+                selectedDraggable.Drag(Input.mousePosition);
 
             if (Input.GetMouseButtonDown(1) && CheckUiBlocks(Input.mousePosition))
                 isUiBlocks = true;

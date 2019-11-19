@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 101332223}
   - component: {fileID: 101332226}
   - component: {fileID: 101332225}
+  - component: {fileID: 101332227}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -152,6 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Size: {x: 3, y: 3, z: 3}
+  FrontMaterial: {fileID: 2100000, guid: 3e516458ebca9d248bd7747e3f4f2fb2, type: 2}
+  BackMaterial: {fileID: 2100000, guid: f0a4ce7f5ef40b74eac98ca593337c3e, type: 2}
 --- !u!4 &101332224
 Transform:
   m_ObjectHideFlags: 0
@@ -212,6 +215,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &101332227
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101332222}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &179123268
 GameObject:
   m_ObjectHideFlags: 0
@@ -788,6 +804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OverviewCamera: {fileID: 963194229}
+  selectedDraggable: {fileID: 0}
 --- !u!4 &1717590399
 Transform:
   m_ObjectHideFlags: 0

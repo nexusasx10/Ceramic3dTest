@@ -4,27 +4,34 @@ namespace Ceramic3d.Test
 {
     public class Draggable : MonoBehaviour
     {
-        private Renderer roomRenderer;
+        private Room room;
+        private Collider roomCollider;
         private Collider collider;
-        private Draggable[] draggables;
         private bool stickToFloor;
 
         private void Awake()
         {
-            roomRenderer = FindObjectOfType<Room>().GetComponent<Renderer>();
+            room = FindObjectOfType<Room>();
+            roomCollider = room.GetComponent<Collider>();
             collider = GetComponent<Collider>();
+            gameObject.layer = LayerMask.NameToLayer("Draggable");
         }
 
-        public void Drag(Vector3 position)
+        public void Drag(Vector3 pointerPosition)
         {
-            draggables = FindObjectsOfType<Draggable>();
+            var ray = Camera.main.ScreenPointToRay(pointerPosition);
+            var plane = new Plane(Camera.main.transform.forward, transform.position);
+            if (!plane.Raycast(ray, out var enter))
+                return;
 
-            var roomLeft = roomRenderer.bounds.min.x;
-            var roomRight = roomRenderer.bounds.max.x;
-            var roomBottom = roomRenderer.bounds.min.y;
-            var roomTop = roomRenderer.bounds.max.y;
-            var roomBack = roomRenderer.bounds.min.z;
-            var roomForward = roomRenderer.bounds.max.z;
+            var position = ray.GetPoint(enter);
+
+            var roomLeft = roomCollider.bounds.min.x;
+            var roomRight = roomCollider.bounds.max.x;
+            var roomBottom = roomCollider.bounds.min.y;
+            var roomTop = roomCollider.bounds.max.y;
+            var roomBack = roomCollider.bounds.min.z;
+            var roomForward = roomCollider.bounds.max.z;
 
             var x = Mathf.Clamp(position.x,
                 roomLeft + collider.bounds.extents.x,
@@ -54,12 +61,12 @@ namespace Ceramic3d.Test
                     transform.rotation = Quaternion.Euler(transform.rotation.x, 0, transform.rotation.x);
                 }
 
-                stickToFloor = Mathf.Abs(y - (roomRenderer.bounds.min.y + collider.bounds.extents.y)) < 0.2;
+                stickToFloor = Mathf.Abs(y - (roomCollider.bounds.min.y + collider.bounds.extents.y)) < 0.2;
                 if (stickToFloor)
-                    y = roomRenderer.bounds.min.y + collider.bounds.extents.y;
+                    y = roomCollider.bounds.min.y + collider.bounds.extents.y;
             }
 
-            foreach (var draggable in draggables)
+            foreach (var draggable in room.Draggables)
             {
                 if (draggable == this)
                     continue;
@@ -93,15 +100,6 @@ namespace Ceramic3d.Test
                         y = collider.bounds.extents.y + draggableCollider.bounds.min.y;
                     else if (Mathf.Abs(y + collider.bounds.extents.y - draggableCollider.bounds.max.y) < 0.2)
                         y = -collider.bounds.extents.y + draggableCollider.bounds.max.y;
-
-                var intersects = Mathf.Abs(x - draggableCollider.bounds.center.x) < collider.bounds.extents.x + draggableCollider.bounds.extents.x - 0.01 &&
-                    Mathf.Abs(y - draggableCollider.bounds.center.y) < collider.bounds.extents.y + draggableCollider.bounds.extents.y - 0.01 &&
-                    Mathf.Abs(z - draggableCollider.bounds.center.z) < collider.bounds.extents.z + draggableCollider.bounds.extents.z - 0.01;
-
-                if (intersects)
-                    y = y > draggableCollider.bounds.center.y
-                        ? draggableCollider.bounds.max.y + collider.bounds.extents.y
-                        : draggableCollider.bounds.min.y - collider.bounds.extents.y;
             }
 
             transform.position = new Vector3(x, y, z);
