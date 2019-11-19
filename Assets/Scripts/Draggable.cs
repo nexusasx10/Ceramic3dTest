@@ -33,15 +33,19 @@ namespace Ceramic3d.Test
             var roomBack = roomCollider.bounds.min.z;
             var roomForward = roomCollider.bounds.max.z;
 
+            var halfWidth = collider.bounds.extents.x;
+            var halfHeight = collider.bounds.extents.y;
+            var halfLength = collider.bounds.extents.z;
+
             var x = Mathf.Clamp(position.x,
-                roomLeft + collider.bounds.extents.x,
-                roomRight - collider.bounds.extents.x);
+                roomLeft + halfWidth,
+                roomRight - halfWidth);
             var y = Mathf.Clamp(position.y,
-                roomBottom + collider.bounds.extents.y,
-                roomTop - collider.bounds.extents.y);
+                roomBottom + halfHeight,
+                roomTop - halfHeight);
             var z = Mathf.Clamp(position.z,
-                roomBack + collider.bounds.extents.z,
-                roomForward - collider.bounds.extents.z);
+                roomBack + halfLength,
+                roomForward - halfLength);
 
             var stickToLeftWall = false;
             var stickToRightWall = false;
@@ -52,18 +56,18 @@ namespace Ceramic3d.Test
                 stickToRightWall = x >= z;
                 if (stickToLeftWall)
                 {
-                    x = roomLeft + collider.bounds.extents.x;
+                    x = roomLeft + halfWidth;
                     transform.rotation = Quaternion.Euler(transform.rotation.x, 90, transform.rotation.x);
                 }
                 else
                 {
-                    z = roomBack + collider.bounds.extents.z;
+                    z = roomBack + halfLength;
                     transform.rotation = Quaternion.Euler(transform.rotation.x, 0, transform.rotation.x);
                 }
 
-                stickToFloor = Mathf.Abs(y - (roomCollider.bounds.min.y + collider.bounds.extents.y)) < 0.2;
+                stickToFloor = Mathf.Abs(y - (roomCollider.bounds.min.y + halfHeight)) < 0.2;
                 if (stickToFloor)
-                    y = roomCollider.bounds.min.y + collider.bounds.extents.y;
+                    y = roomCollider.bounds.min.y + halfHeight;
             }
 
             foreach (var draggable in room.Draggables)
@@ -75,31 +79,31 @@ namespace Ceramic3d.Test
 
                 if (!Input.GetKey(KeyCode.LeftControl))
                 {
-                    if (y + collider.bounds.extents.y > draggableCollider.bounds.min.y &&
-                        y - collider.bounds.extents.y < draggableCollider.bounds.max.y)
+                    if (y + halfHeight > draggableCollider.bounds.min.y &&
+                        y - halfHeight < draggableCollider.bounds.max.y)
                     {
                         if (stickToRightWall)
                         {
-                            if (stickToSide = Mathf.Abs(x + collider.bounds.extents.x - draggableCollider.bounds.min.x) < 0.2)
-                                x = draggableCollider.bounds.min.x - collider.bounds.extents.x;
-                            else if (stickToSide = Mathf.Abs(x - collider.bounds.extents.x - draggableCollider.bounds.max.x) < 0.2)
-                                x = draggableCollider.bounds.max.x + collider.bounds.extents.x;
+                            if (stickToSide = Mathf.Abs(x + halfWidth - draggableCollider.bounds.min.x) < 0.2)
+                                x = draggableCollider.bounds.min.x - halfWidth;
+                            else if (stickToSide = Mathf.Abs(x - halfWidth - draggableCollider.bounds.max.x) < 0.2)
+                                x = draggableCollider.bounds.max.x + halfWidth;
                         }
                         else if (stickToLeftWall)
                         {
-                            if (stickToSide = Mathf.Abs(z + collider.bounds.extents.z - draggableCollider.bounds.min.z) < 0.2)
-                                z = draggableCollider.bounds.min.z - collider.bounds.extents.z;
-                            else if (stickToSide = Mathf.Abs(z - collider.bounds.extents.z - draggableCollider.bounds.max.z) < 0.2)
-                                z = draggableCollider.bounds.max.z + collider.bounds.extents.z;
+                            if (stickToSide = Mathf.Abs(z + halfLength - draggableCollider.bounds.min.z) < 0.2)
+                                z = draggableCollider.bounds.min.z - halfLength;
+                            else if (stickToSide = Mathf.Abs(z - halfLength - draggableCollider.bounds.max.z) < 0.2)
+                                z = draggableCollider.bounds.max.z + halfLength;
                         }
                     }
                 }
 
                 if (stickToSide)
-                    if (draggable.stickToFloor || Mathf.Abs(y - collider.bounds.extents.y - draggableCollider.bounds.min.y) < 0.2)
-                        y = collider.bounds.extents.y + draggableCollider.bounds.min.y;
-                    else if (Mathf.Abs(y + collider.bounds.extents.y - draggableCollider.bounds.max.y) < 0.2)
-                        y = -collider.bounds.extents.y + draggableCollider.bounds.max.y;
+                    if (draggable.stickToFloor || Mathf.Abs(y - halfHeight - draggableCollider.bounds.min.y) < 0.2)
+                        y = halfHeight + draggableCollider.bounds.min.y;
+                    else if (Mathf.Abs(y + halfHeight - draggableCollider.bounds.max.y) < 0.2)
+                        y = -halfHeight + draggableCollider.bounds.max.y;
             }
 
             transform.position = new Vector3(x, y, z);
