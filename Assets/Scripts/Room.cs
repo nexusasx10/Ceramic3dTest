@@ -67,6 +67,10 @@ namespace Ceramic3d.Test
             floorBackTransform.GetComponent<MeshRenderer>().material = BackMaterial;
             leftWallBackTransform.GetComponent<MeshRenderer>().material = BackMaterial;
             rightWallBackTransform.GetComponent<MeshRenderer>().material = BackMaterial;
+
+            floorFrontTransform.gameObject.layer = LayerMask.NameToLayer("Room");
+            leftWallFrontTransform.gameObject.layer = LayerMask.NameToLayer("Room");
+            rightWallFrontTransform.gameObject.layer = LayerMask.NameToLayer("Room");
         }
     }
 }

@@ -365,6 +365,8 @@ MonoBehaviour:
   - {fileID: 5144175658211263776, guid: c9feb8eeaa91b044388db7a992920401, type: 3}
   ItemPrefab: {fileID: 7391236807906004565, guid: 1f90c8dc40048b14e805d178d29aba9e,
     type: 3}
+  FollowerPrefab: {fileID: 1891626420565117225, guid: 08ec28949a470b44e8da3e81c3705adc,
+    type: 3}
 --- !u!1 &370637850
 GameObject:
   m_ObjectHideFlags: 0
