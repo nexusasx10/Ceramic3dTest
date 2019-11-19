@@ -100,9 +100,9 @@ namespace Ceramic3d.Test
                 }
 
                 if (stickToSide)
-                    if (draggable.stickToFloor || Mathf.Abs(y - halfHeight - draggableCollider.bounds.min.y) < 0.2)
+                    if (Mathf.Abs(y - halfHeight - draggableCollider.bounds.min.y) < 0.2)
                         y = halfHeight + draggableCollider.bounds.min.y;
-                    else if (Mathf.Abs(y + halfHeight - draggableCollider.bounds.max.y) < 0.2)
+                    else if (Mathf.Abs(y + halfHeight - draggableCollider.bounds.max.y) < 0.2 && !draggable.stickToFloor)
                         y = -halfHeight + draggableCollider.bounds.max.y;
             }
 
